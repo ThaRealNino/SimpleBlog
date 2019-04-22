@@ -1,8 +1,14 @@
 <?php 
 	$path = parse_url($_SERVER['REQUEST_URI']);
 	
+	if(isset($_SERVER['HTTPS'])) {
+		$server_prefix = "https://";
+	} else {
+		$server_prefix = "http://";
+	}
+	
 	if($path["path"] == "/" || $path["path"] == "") {
-		header("Location: ");
+		header("Location: ".$server_prefix.$_SERVER['SERVER_NAME']."/index");
 	}
 	
 	$isIndex = false;
@@ -77,14 +83,18 @@
 					
 							foreach($files as $file) {
 						
-								echo "<a>".$file."</a><br />";
+								echo "<a href=\"".$server_prefix.$_SERVER['SERVER_NAME']."/entry?".$file."\">".$file."</a><br />";
 							}
 						} else {
 							echo "Nothing to see here...";
 						}
 					}
 				} else if ($isBlog) {
-				
+					
+					$temp_content = file_get_contents("./blog/".$entry, FILE_TEXT);
+					
+					echo mb_convert_encoding($temp_content, 'UTF-8', mb_detect_encoding($temp_content, 'UTF-8, ISO-8859-1', true));
+					
 				} else {
 				
 					echo "Hoppla. Diese Seite konnte nicht gefunden werden.";
