@@ -59,7 +59,7 @@
 				if($isIndex) {
 					echo "Index";
 				} elseif ($isBlog) {
-					echo $entry;
+					echo substr($entry, 8);
 				} else {
 					echo "Hoppla!";
 				}
@@ -69,8 +69,11 @@
 			<?php
 				
 				if($isIndex) {
+					
+					$date = new DateTime();
+					$date = $date->format('Ymd');
 			
-					$files = scandir("./blog");
+					$files = scandir("./blog", SCANDIR_SORT_ASCENDING);
 				
 					if($files == false) {
 						echo "Nothing to see here...";
@@ -78,12 +81,16 @@
 					} else {
 				
 						$files = array_slice($files, 2);
-					
+
+						$files = array_reverse($files);
+	
 						if(count($files) != 0) {
 					
 							foreach($files as $file) {
-						
-								echo "<a href=\"".$server_prefix.$_SERVER['SERVER_NAME']."/entry?".$file."\">".$file."</a><br />";
+								
+								if(!(substr($file, 0, 8) > $date)) {
+									echo "<a href=\"".$server_prefix.$_SERVER['SERVER_NAME']."/entry?".$file."\">".substr($file, 8)."</a><br />";
+								}
 							}
 						} else {
 							echo "Nothing to see here...";
